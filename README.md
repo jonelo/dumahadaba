@@ -11,13 +11,14 @@ The file called ./HashDB is already there, do you want to download the lastest v
 Calculating hash of ./HashDB ...
 Downloading the latest database from https://github.com/CYB3RMX/MalwareHashDB/raw/main/HashDB and saving it to ./HashDB ...
 Calculating hash of ./HashDB ...
-This is a new version of the database!
-The MalwareHashDB.dump.md5 is not there.
+This is the same database that we have had previously.
+The MalwareHashDB.dump.md5 is already there.
+Do you want to regenerate the hash file? [y]:
 Generating the hash file MalwareHashDB.dump.md5, please wait ...
 Warning: There is no description for hash value c26d10bb3f1f2471829499da20f35c64, I set the value to "<malware, but no description>".
 
 0 invalid records have been ignored.
-1 records have been fixed.
+1 record has been fixed.
 354976 valid MD5 records have been written to MalwareHashDB.dump.md5.
 ```
 

@@ -1,7 +1,7 @@
 # dumahadaba
 
 Dump Malware Hash DataBase. The script downloads the SQLite database from https://github.com/CYB3RMX/MalwareHashDB/ and it dumps the content (MD5 hash values of malware and their descriptions)
-to a GNU/Linux compatible text hash file so that it can be processed further by tools which are able to handle plain text hash value lists.
+to a GNU/Linux compatible text hash file so that it can be processed further by tools which are able to handle plain text hash value lists. The script also detects records in HashDB that have a hash value but no description (those will be fixed in the dump), and records that do not represent valid MD5 hash values (those will be ignored in the dump).
 
 ## Dump the data base
 

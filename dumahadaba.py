@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #
 # Downloads the SQLite database from https://github.com/CYB3RMX/MalwareHashDB/
 # and dumps the content (MD5 hash values of malware and their descriptions)
@@ -17,17 +18,20 @@
 # author: Johann N. Löfflmann <https://johann.loefflmann.net>
 #
 
+
 import requests
 import sqlite3
 import re
 import os.path
 import hashlib
 
+
 # init constants
 DATABASE_REMOTE = 'https://github.com/CYB3RMX/MalwareHashDB/raw/main/HashDB'
 DATABASE_LOCAL = "./HashDB"
 MALWARE_HASHES_FILENAME = "MalwareHashDB.dump.md5"
 NO_DESCRIPTION = "<malware, but no description>"
+
 
 # functions
 def yesno(prompt):
@@ -44,6 +48,8 @@ def yesno(prompt):
         else:
             print("Please enter y or n.") 
 
+
+# returns a sha256 hash value from a file
 def hashfile(filename):
     with open(DATABASE_LOCAL,"rb") as f:
         bytes = f.read() # read entire file as bytes
@@ -51,30 +57,42 @@ def hashfile(filename):
         return readable_hash
 
 
-# download or not to download?
-if os.path.exists(DATABASE_LOCAL):
-    if yesno(f"The file called {DATABASE_LOCAL} is already there, do you want to download the lastest version from {DATABASE_REMOTE}? [y]: "):
+# returns singular or plural text fragment, depentend on the number
+def singular_or_plural(number):
+    if (number == 1):
+        return " has"
+    else:
+        return "s have"
 
+
+# download or not to download?
+database_local_exists = os.path.exists(DATABASE_LOCAL)
+if database_local_exists:
+    download_wanted = yesno(f"The file called {DATABASE_LOCAL} is already there, do you want to download the lastest version from {DATABASE_REMOTE}? [y]: ")
+    if download_wanted:
         print(f"Calculating hash of {DATABASE_LOCAL} ...")
         hash1 = hashfile(DATABASE_LOCAL)
+else:
+    download_wanted = yesno(f"The file called {DATABASE_LOCAL} is not there, do you want to download the lastest version from {DATABASE_REMOTE}? [y]: ")
 
-        # Download the MalwareHashDB
-        print (f"Downloading the latest database from {DATABASE_REMOTE} and saving it to {DATABASE_LOCAL} ...")
-        response = requests.get(DATABASE_REMOTE, allow_redirects=True)
-        #open(database, 'wb').write(response.content)
-        with open(DATABASE_LOCAL, 'wb') as f:
-            f.write(response.content)
+if download_wanted: 
+    # Download the MalwareHashDB
+    print (f"Downloading the latest database from {DATABASE_REMOTE} and saving it to {DATABASE_LOCAL} ...")
+    response = requests.get(DATABASE_REMOTE, allow_redirects=True)
+    with open(DATABASE_LOCAL, 'wb') as f:
+        f.write(response.content)
 
+    if database_local_exists:
         print(f"Calculating hash of {DATABASE_LOCAL} ...")
         hash2 = hashfile(DATABASE_LOCAL)
 
-        # do we need to generate the .md5 file?
+        # give the user a hint whether it is required to generate the .md5 file
         if (hash1 == hash2):
             print ("This is the same database that we have had previously.")
         else:
             print ("This is a new version of the database!")
-    else:
-        print ("Ok.")
+else:
+    print ("Ok.")
 
 if os.path.exists(MALWARE_HASHES_FILENAME):
     print (f"The {MALWARE_HASHES_FILENAME} is already there.")
@@ -135,6 +153,7 @@ with open(MALWARE_HASHES_FILENAME, "w", newline='\n') as malware_hashes:
 
 # print some statistics
 print()
-print(f"{invalid_records} invalid records have been ignored.")
-print(f"{fixed_records} records have been fixed.")
-print(f"{successful_records} valid MD5 records have been written to {MALWARE_HASHES_FILENAME}.")
+print(f"{invalid_records} invalid record{singular_or_plural(invalid_records)} been ignored.")
+print(f"{fixed_records} record{singular_or_plural(fixed_records)} been fixed.")
+print(f"{successful_records} valid MD5 record{singular_or_plural(successful_records)} been written to {MALWARE_HASHES_FILENAME}.")
+
